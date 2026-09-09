@@ -5,69 +5,13 @@ from datetime import datetime
 import os
 
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
-conn = sqlite3.connect("shop.db")
-c = conn.cursor()
-
-c.execute("""CREATE TABLE IF NOT EXISTS products (
-    id INTEGER PRIMARY KEY, name TEXT, price INTEGER, stock INTEGER
-)""")
-c.execute("""CREATE TABLE IF NOT EXISTS orders (
-    id INTEGER PRIMARY KEY, user_id INTEGER, product_id INTEGER, status TEXT, created_at TEXT
-)""")
-conn.commit()
 
 @bot.event
 async def on_ready():
     print("✅ Bot đã sẵn sàng, boss man!")
 
 @bot.command()
-async def shop(ctx):
-    c.execute("SELECT * FROM products WHERE stock>0")
-    products = c.fetchall()
-    if not products:
-        await ctx.send("❌ Shop đang trống!")
-        return
-    embed = discord.Embed(title="🛒 CỬA HÀNG", color=0x00ff00)
-    for p in products:
-        embed.add_field(name=f"{p[1]}", value=f"💰 {p[2]} VND | 📦 Còn: {p[3]}", inline=False)
-    await ctx.send(embed=embed)
-
-@bot.command()
-async def buy(ctx, product_id: int):
-    c.execute("SELECT * FROM products WHERE id=? AND stock>0", (product_id,))
-    product = c.fetchone()
-    if not product:
-        await ctx.send("❌ Hết hàng!")
-        return
-    c.execute("INSERT INTO orders (user_id, product_id, status, created_at) VALUES (?,?,?,?)",
-              (ctx.author.id, product_id, "pending", str(datetime.now())))
-    conn.commit()
-    await ctx.send(f"✅ Đơn hàng đã tạo! Admin sẽ xác nhận sau.")
-
-@bot.command()
-@commands.has_permissions(administrator=True)
-async def orders(ctx):
-    c.execute("SELECT * FROM orders WHERE status='pending'")
-    orders = c.fetchall()
-    if not orders:
-        await ctx.send("📭 Không có đơn nào.")
-        return
-    for o in orders:
-        user = await bot.fetch_user(o[1])
-        await ctx.send(f"📦 #{o[0]} | {user.name} | !done {o[0]}")
-
-@bot.command()
-@commands.has_permissions(administrator=True)
-async def done(ctx, order_id: int):
-    c.execute("UPDATE orders SET status='done' WHERE id=?", (order_id,))
-    conn.commit()
-    await ctx.send(f"✅ Đơn #{order_id} đã xác nhận!")
-
-@bot.command()
-@commands.has_permissions(administrator=True)
-async def add_product(ctx, name: str, price: int, stock: int):
-    c.execute("INSERT INTO products (name, price, stock) VALUES (?,?,?)", (name, price, stock))
-    conn.commit()
-    await ctx.send(f"✅ Đã thêm: {name}")
+async def ping(ctx):
+    await ctx.send("🏓 Pong!")
 
 bot.run(os.getenv("TOKEN"))
