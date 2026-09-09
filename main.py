@@ -10,11 +10,11 @@ async def on_ready():
 
 @bot.command()
 async def ping(ctx):
-    await ctx.send("Dạ, thưa cậu chủ!")
+    await ctx.send("Xin chào cậu chủ! Tôi sẵn sàng ạ.")
 
 @bot.command()
 async def hello(ctx):
-    await ctx.send("Xin chào cậu chủ! Tôi sẵn sàng phục vụ ạ.")
+    await ctx.send("Chào cậu chủ! Có gì cần tôi giúp không ạ?")
 
 @bot.command()
 async def helpme(ctx):
@@ -23,9 +23,7 @@ async def helpme(ctx):
     embed.add_field(name="!hello", value="Chào bot", inline=False)
     embed.add_field(name="!shop", value="Xem cửa hàng", inline=False)
     embed.add_field(name="!buy [ID]", value="Mua sản phẩm", inline=False)
-    embed.add_field(name="!add_product [tên] [giá] [số lượng]", value="Thêm sản phẩm (admin)", inline=False)
-    embed.add_field(name="!orders", value="Xem đơn hàng (admin)", inline=False)
-    embed.add_field(name="!done [mã]", value="Xác nhận đơn (admin)", inline=False)
     await ctx.send(embed=embed)
 
 bot.run(os.getenv("TOKEN"))
+
